@@ -380,6 +380,11 @@ def sub_main():
 
     global min_MegaMillions_probability_interquartile
     global min_MegaMillions_spl_probability_interquartile
+    global min_PowerBall_probability_interquartile
+    global min_PowerBall_spl_probability_interquartile
+
+    global max_MegaMillions_probability_interquartile
+    global max_MegaMillions_spl_probability_interquartile
     global max_PowerBall_probability_interquartile
     global max_PowerBall_spl_probability_interquartile
 
