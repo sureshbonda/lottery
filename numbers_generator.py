@@ -380,8 +380,8 @@ def sub_main():
 
     global min_MegaMillions_probability_interquartile
     global min_MegaMillions_spl_probability_interquartile
-    global max_MegaMillions_probability_interquartile
-    global max_MegaMillions_spl_probability_interquartile
+    global max_PowerBall_probability_interquartile
+    global max_PowerBall_spl_probability_interquartile
 
     MegaMillions_past_winning_numbers = get_winning_numbers("MegaMillions")
     #print("Printing MegaMillions Winning Numbers==================================")
