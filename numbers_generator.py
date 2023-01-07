@@ -27,23 +27,31 @@ def get_interquartile_range(lst):
 
     if lstfirstlast % 2 != 0:
         #print("lstfirstlast type:",type(lstfirstlast))
+        #print("iqdelta type:",type(iqdelta))
+        mininterquartilevalue = lst[int(math.ceil(lstfirstlast/2)) - 1 - int(iqdelta)]  # Commented to tweak interquartile
         #mininterquartilevalue = lst[int(math.ceil(lstfirstlast/2)) - 1]  # Commented to tweak interquartile
         #mininterquartilevalue = lst[int(math.ceil(lstfirstlast/2)) + 11] # Reduced range
-        mininterquartilevalue = lst[int(math.ceil(lstfirstlast/2)) - 13]   # Increased range
+        #mininterquartilevalue = lst[int(math.ceil(lstfirstlast/2)) - 13]   # Increased range
     else:
         #print("lstfirstlast type:",type(lstfirstlast))
+        #print("iqdelta type:",type(iqdelta))
+        mininterquartilevalue = (float(lst[int(lstfirstlast/2) - 1 - int(iqdelta)]) + float(lst[int(lstfirstlast/2) - int(iqdelta)])) / 2       # Commented to tweak interquartile
         #mininterquartilevalue = (float(lst[int(lstfirstlast/2) - 1]) + float(lst[int(lstfirstlast/2)])) / 2       # Commented to tweak interquartile
         #mininterquartilevalue = (float(lst[int(lstfirstlast/2)] + 11) + float(lst[int(lstfirstlast/2) + 12])) / 2 # Reduced range
-        mininterquartilevalue = (float(lst[int(lstfirstlast/2)] - 13) + float(lst[int(lstfirstlast/2) - 12])) / 2    # Increased range
+        #mininterquartilevalue = (float(lst[int(lstfirstlast/2)] - 13) + float(lst[int(lstfirstlast/2) - 12])) / 2    # Increased range
 
     if (lstlen - lstsecondfirst + 1) % 2 != 0:
+        #print("iqdelta type:",type(iqdelta))
+        maxinterquartilevalue = lst[lstsecondfirst + int((lstlen - lstsecondfirst) / 2) - 1 - int(iqdelta)]  # Comment to tweak interquartile
         #maxinterquartilevalue = lst[lstsecondfirst + int((lstlen - lstsecondfirst) / 2) - 1]  # Comment to tweak interquartile
         #maxinterquartilevalue = lst[lstsecondfirst + int((lstlen - lstsecondfirst) / 2) - 14] # Reduced range
-        maxinterquartilevalue = lst[lstsecondfirst + int((lstlen - lstsecondfirst) / 2) + 11]       # Increase range
+        #maxinterquartilevalue = lst[lstsecondfirst + int((lstlen - lstsecondfirst) / 2) + 11]       # Increase range
     else:
+        #print("iqdelta type:",type(iqdelta))
+        maxinterquartilevalue = (lst[lstsecondfirst + int(math.floor((lstlen - lstsecondfirst) / 2)) - 1 + int(iqdelta)] + lst[lstsecondfirst + int(math.ceil((lstlen - lstsecondfirst) / 2)) - 1 + int(iqdelta)]) / 2   # Commented to tweak interquartile
         #maxinterquartilevalue = (lst[lstsecondfirst + int(math.floor((lstlen - lstsecondfirst) / 2)) - 1] + lst[lstsecondfirst + int(math.ceil((lstlen - lstsecondfirst) / 2)) - 1]) / 2   # Commented to tweak interquartile
         #maxinterquartilevalue = (lst[lstsecondfirst + int(math.floor((lstlen - lstsecondfirst) / 2)) - 14] + lst[lstsecondfirst + int(math.ceil((lstlen - lstsecondfirst) / 2)) - 14]) / 2 # Reduced range
-        maxinterquartilevalue = (lst[lstsecondfirst + int(math.floor((lstlen - lstsecondfirst) / 2)) + 11] + lst[lstsecondfirst + int(math.ceil((lstlen - lstsecondfirst) / 2)) + 11]) / 2            # Increased range
+        #maxinterquartilevalue = (lst[lstsecondfirst + int(math.floor((lstlen - lstsecondfirst) / 2)) + 11] + lst[lstsecondfirst + int(math.ceil((lstlen - lstsecondfirst) / 2)) + 11]) / 2            # Increased range
 
     return mininterquartilevalue,maxinterquartilevalue
 
@@ -320,33 +328,61 @@ def generate_winning_numbers(lottery):
     #for i in range(1, max_num):
     for i in range(3, 4):
 #        print("i[" + str(i) + "]")
-        #for j in range(i+1, max_num):
-        for j in range(20, 21):
+        for j in range(i+1, max_num):
+        #for j in range(20, 21):
 #            print("j[" + str(j) + "]")
             if j < 10:
                 continue
-            #for k in range(j+1, max_num):
-            for k in range(46, 47):
+            for k in range(j+1, max_num):
+            #for k in range(46, 47):
 #                print("k[" + str(k) + "]")
                 if k < 20:
                     continue
-                #for l in range(k+1, max_num):
-                for l in range(50, 60):
+                for l in range(k+1, max_num):
+                #for l in range(50, 60):
 #                    print("l[" + str(l) + "]")
                     if l < 35:
                         continue
-                    #for m in range(l+1, max_num):
-                    for m in range(60, 64):
+                    for m in range(l+1, max_num):
+                    #for m in range(60, 64):
 #                        print("m[" + str(m) + "]")
                         if m < 50:
                             continue
-                        #for n in range(1, max_special):
                         for n in range(1, max_special):
+                        #for n in range(1, max_special):
                             win_num=[i,j,k,l,m,n]
                             check_rules(lottery,win_num)
                             #print(f'{i:02d} {j:02d} {k:02d} {l:02d} {m:02d} {n:02d}') 
 
-def submain():
+def sub_main():
+    global MegaMillions_past_winning_numbers
+    global PowerBall_past_winning_numbers
+
+    global MegaMillions_probabilities
+    global MegaMillions_Mega_probabilities
+    global PowerBall_probabilities
+    global PowerBall_Power_probabilities
+
+    global MegaMillions_sums
+    global MegaMillions_sums_with_spl
+    global PowerBall_sums
+    global MegaMillions_sums_with_spl
+
+    global min_MegaMillions_sums_interquartile
+    global min_MegaMillions_sums_with_spl_interquartile
+    global min_PowerBall_sums_interquartile
+    global min_PowerBall_sums_with_spl_interquartile
+
+    global max_MegaMillions_sums_interquartile
+    global max_MegaMillions_sums_with_spl_interquartile
+    global max_PowerBall_sums_interquartile
+    global max_PowerBall_sums_with_spl_interquartile
+
+    global min_MegaMillions_probability_interquartile
+    global min_MegaMillions_spl_probability_interquartile
+    global max_MegaMillions_probability_interquartile
+    global max_MegaMillions_spl_probability_interquartile
+
     MegaMillions_past_winning_numbers = get_winning_numbers("MegaMillions")
     #print("Printing MegaMillions Winning Numbers==================================")
     #for numbers in MegaMillions_past_winning_numbers:
@@ -393,31 +429,37 @@ def submain():
     min_PowerBall_sums_with_spl_interquartile,max_PowerBall_sums_with_spl_interquartile=get_interquartile_range(PowerBall_sums_with_spl)
     #print(min_MegaMillions_sums_interquartile,max_MegaMillions_sums_interquartile,min_MegaMillions_sums_with_spl_interquartile,max_MegaMillions_sums_with_spl_interquartile,min_PowerBall_sums_interquartile,max_PowerBall_sums_interquartile,min_PowerBall_sums_with_spl_interquartile,max_PowerBall_sums_with_spl_interquartile)
     
-    generate_winning_numbers("MegaMillions")
-    #generate_winning_numbers("PowerBall")
+    #generate_winning_numbers("MegaMillions")
+    generate_winning_numbers("PowerBall")
 
 def main(argv):
+    global testpercent
+    global testcount
+    global iqdelta
+
     testpercent = 0
     testcount   = 0
     iqdelta     = 0
 
     try:
-        opts, args = getopt.getopt(argv,"hpc:d",["p=","c=","d="])
+        opts, args = getopt.getopt(argv,"hp:c:d:")
     except getopt.GetOptError:
         print('number_generator.py -p testpercent -c testcount -d iqdelta')
         sys.exit(2)
 
     for opt, arg in opts:
         if opt == '-h':
-            print('number_generator.py -tp testpercent -tc testcount -iqd iqdelta')
+            print('number_generator.py -p testpercent -c testcount -d iqdelta')
             sys.exit()
-        elif opt == '-tp':
+        elif opt == '-p':
             testpercent = arg
-        elif opt == '-tc':
+        elif opt == '-c':
             testcount = arg
-        elif opt == '-iqd':
+        elif opt == '-d':
             iqdelta = arg
-    print(testpercent, testcount, iqdelta)
+
+    #print(testpercent, testcount, iqdelta)
+    sub_main()
 
 if __name__ == "__main__":
     main(sys.argv[1:])
