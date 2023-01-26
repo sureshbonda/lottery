@@ -10,9 +10,12 @@ import time
 ids = { "MegaMillions": "5xaw-6ayf", "PowerBall" : "d6yy-54nr" }
 
 def get_interquartile_range(lst):
+    lst = [x for x in lst ]
     lstlen = len(lst)
     #print("lstlen:[" + str(lstlen) + "]")
+    #print("Unsorted lst ",lst)
     lst.sort()
+    #print("Sorted lst ",lst)
 
     if lstlen % 2 != 0:
         lstfirstlast = int(math.floor(lstlen/2))
@@ -29,48 +32,42 @@ def get_interquartile_range(lst):
         #print("lstfirstlast type:",type(lstfirstlast))
         #print("iqdelta type:",type(iqdelta))
         mininterquartilevalue = lst[int(math.ceil(lstfirstlast/2)) - 1 - int(iqdelta)]  # Commented to tweak interquartile
-        #mininterquartilevalue = lst[int(math.ceil(lstfirstlast/2)) - 1]  # Commented to tweak interquartile
-        #mininterquartilevalue = lst[int(math.ceil(lstfirstlast/2)) + 11] # Reduced range
-        #mininterquartilevalue = lst[int(math.ceil(lstfirstlast/2)) - 13]   # Increased range
     else:
         #print("lstfirstlast type:",type(lstfirstlast))
         #print("iqdelta type:",type(iqdelta))
         mininterquartilevalue = (float(lst[int(lstfirstlast/2) - 1 - int(iqdelta)]) + float(lst[int(lstfirstlast/2) - int(iqdelta)])) / 2       # Commented to tweak interquartile
-        #mininterquartilevalue = (float(lst[int(lstfirstlast/2) - 1]) + float(lst[int(lstfirstlast/2)])) / 2       # Commented to tweak interquartile
-        #mininterquartilevalue = (float(lst[int(lstfirstlast/2)] + 11) + float(lst[int(lstfirstlast/2) + 12])) / 2 # Reduced range
-        #mininterquartilevalue = (float(lst[int(lstfirstlast/2)] - 13) + float(lst[int(lstfirstlast/2) - 12])) / 2    # Increased range
 
     if (lstlen - lstsecondfirst + 1) % 2 != 0:
         #print("iqdelta type:",type(iqdelta))
-        maxinterquartilevalue = lst[lstsecondfirst + int((lstlen - lstsecondfirst) / 2) - 1 - int(iqdelta)]  # Comment to tweak interquartile
-        #maxinterquartilevalue = lst[lstsecondfirst + int((lstlen - lstsecondfirst) / 2) - 1]  # Comment to tweak interquartile
-        #maxinterquartilevalue = lst[lstsecondfirst + int((lstlen - lstsecondfirst) / 2) - 14] # Reduced range
-        #maxinterquartilevalue = lst[lstsecondfirst + int((lstlen - lstsecondfirst) / 2) + 11]       # Increase range
+        maxinterquartilevalue = lst[lstsecondfirst + int((lstlen - lstsecondfirst) / 2) - 2 + int(iqdelta)]  # Comment to tweak interquartile
     else:
         #print("iqdelta type:",type(iqdelta))
-        maxinterquartilevalue = (lst[lstsecondfirst + int(math.floor((lstlen - lstsecondfirst) / 2)) - 1 + int(iqdelta)] + lst[lstsecondfirst + int(math.ceil((lstlen - lstsecondfirst) / 2)) - 1 + int(iqdelta)]) / 2   # Commented to tweak interquartile
-        #maxinterquartilevalue = (lst[lstsecondfirst + int(math.floor((lstlen - lstsecondfirst) / 2)) - 1] + lst[lstsecondfirst + int(math.ceil((lstlen - lstsecondfirst) / 2)) - 1]) / 2   # Commented to tweak interquartile
-        #maxinterquartilevalue = (lst[lstsecondfirst + int(math.floor((lstlen - lstsecondfirst) / 2)) - 14] + lst[lstsecondfirst + int(math.ceil((lstlen - lstsecondfirst) / 2)) - 14]) / 2 # Reduced range
-        #maxinterquartilevalue = (lst[lstsecondfirst + int(math.floor((lstlen - lstsecondfirst) / 2)) + 11] + lst[lstsecondfirst + int(math.ceil((lstlen - lstsecondfirst) / 2)) + 11]) / 2            # Increased range
+        maxinterquartilevalue = (lst[lstsecondfirst + int(math.floor((lstlen - lstsecondfirst) / 2)) - 2 + int(iqdelta)] + lst[lstsecondfirst + int(math.ceil((lstlen - lstsecondfirst) / 2)) - 2 + int(iqdelta)]) / 2   # Commented to tweak interquartile
 
+    #print(mininterquartilevalue,maxinterquartilevalue)
     return mininterquartilevalue,maxinterquartilevalue
 
 def calculate_winning_probability(lottery, win_num):
     sum = 0.0
+    position_probability = [ int(0) for i in range(6) ]
 
     if lottery == "MegaMillions":
         probabilities = MegaMillions_probabilities
         spl_probabilities = MegaMillions_Mega_probabilities
+        position_probabilities = MegaMillions_position_probabilities
 
     if lottery == "PowerBall":
         probabilities = PowerBall_probabilities
         spl_probabilities = PowerBall_Power_probabilities
+        position_probabilities = PowerBall_position_probabilities
 
 
     for i in range(5):
         sum += float(probabilities[win_num[i]-1])
+        position_probability[i] = probabilities[win_num[i]-1]
+    position_probability[5] = spl_probabilities[win_num[5]-1]
     sum_with_spl = sum + float(spl_probabilities[win_num[5]-1])
-    return sum,sum_with_spl
+    return sum,sum_with_spl,position_probability
 
 def past_winning_probabilities(lottery, past_winning_numbers):
     sums = [ int(0) for i in range(len(past_winning_numbers)) ]
@@ -198,29 +195,33 @@ def check_rules(lottery,win_num):
                                     #print("no many even odds: ",win_num_str)
                                     if check_prime_divisions(win_num):
                                         #print("no prime divisions: ",win_num_str)
-                                        probability,spl_probability = calculate_winning_probability(lottery, win_num)
+                                        probability,spl_probability,position_probability = calculate_winning_probability(lottery, win_num)
         
                                         if lottery == "MegaMillions":
                                             min_probability = min_MegaMillions_probability_interquartile
                                             max_probability = max_MegaMillions_probability_interquartile
                                             min_spl_probability = min_MegaMillions_spl_probability_interquartile
                                             max_spl_probability = max_MegaMillions_spl_probability_interquartile
+                                            min_position_probability = min_MegaMillions_position_probability_interquartile
+                                            max_position_probability = max_MegaMillions_position_probability_interquartile
 
                                         if lottery == "PowerBall":
                                             min_probability = min_PowerBall_probability_interquartile
                                             max_probability = max_PowerBall_probability_interquartile
                                             min_spl_probability = min_PowerBall_spl_probability_interquartile
                                             max_spl_probability = max_PowerBall_spl_probability_interquartile
+                                            min_position_probability = min_PowerBall_position_probability_interquartile
+                                            max_position_probability = max_PowerBall_position_probability_interquartile
 
-
+                                        #print("Printing position probabilities:",position_probability,min_position_probability,max_position_probability)
                                         if probability > min_probability and probability < max_probability and spl_probability > min_spl_probability and spl_probability < max_spl_probability:
-                                        #if spl_probability > min_spl_probability and spl_probability < max_spl_probability:
-                                        #if probability > min_probability and probability < max_probability:
+                                            for i in range(5):
+                                                if not (position_probability[i] > min_position_probability[i] and position_probability[i] < max_position_probability[i]):
+                                                    print("failed: position probabilities ",win_num_str,i,position_probability[i],min_position_probability[i],max_position_probability[i])
+                                                    return -1
                                             print(win_num_str)
-                                        else:
-                                            print("failed: probabilities ",win_num_str,probability,min_probability,max_probability,spl_probability,min_spl_probability,max_spl_probability)
-                                            #print("failed: probabilities ",spl_probability,min_spl_probability,max_spl_probability)
-                                            #print("failed: probabilities ",win_num_str,probability,min_probability,max_probability)
+                                        #else:
+                                            #print("failed: probabilities ",win_num_str,probability,min_probability,max_probability,spl_probability,min_spl_probability,max_spl_probability)
                                     else:
                                         print("failed: prime divisions ",win_num_str)
                                 else:
@@ -257,8 +258,24 @@ def find_probabilities(lottery, past_winning_numbers):
         max_num = 69
         max_special = 26
 
+    
+    positionoccurrence = [
+            [ int(0) for i in range(max_num) ],
+            [ int(0) for i in range(max_num) ],
+            [ int(0) for i in range(max_num) ],
+            [ int(0) for i in range(max_num) ],
+            [ int(0) for i in range(max_num) ]
+        ]
     occurrence = [ int(0) for i in range(max_num) ]
     spl_occurrence = [ int(0) for i in range(max_special) ]
+
+    positionprobabilities = [
+            [ int(0) for i in range(max_num) ],
+            [ int(0) for i in range(max_num) ],
+            [ int(0) for i in range(max_num) ],
+            [ int(0) for i in range(max_num) ],
+            [ int(0) for i in range(max_num) ]
+        ]
     probabilities = [ int(0) for i in range(max_num) ]
     spl_probabilities = [ int(0) for i in range(max_special) ]
     #print(occurrence)
@@ -271,17 +288,20 @@ def find_probabilities(lottery, past_winning_numbers):
         for i in range(5):
             occurrence[win_num[i]-1] += 1
             totaloccurrences += 1
+            positionoccurrence[i][win_num[i] - 1] += 1
         #print(occurrence)
         spl_occurrence[win_num[5]-1] += 1
         totalsploccurrences += 1
     
     for i in range(max_num):
         probabilities[i] = occurrence[i]*1000/totaloccurrences
+        for j in range(5):
+            positionprobabilities[j][i] = positionoccurrence[j][i]*1000/len(past_winning_numbers)
 
     for i in range(max_special):
         spl_probabilities[i] = spl_occurrence[i]*1000/totalsploccurrences
 
-    return probabilities,spl_probabilities
+    return probabilities,spl_probabilities,positionprobabilities
 
 
 def get_winning_numbers(lottery):
@@ -319,14 +339,16 @@ def generate_winning_numbers(lottery):
     if lottery == "MegaMillions":
         max_num = 71
         max_special = 26
+        min_position_probability = min_MegaMillions_position_probability_interquartile
+        max_position_probability = max_MegaMillions_position_probability_interquartile
 
     if lottery == "PowerBall":
         max_num = 70
         max_special = 27
 
     #print("In generating numbers")
-    #for i in range(1, max_num):
-    for i in range(3, 4):
+    for i in range(1, max_num):
+    #for i in range(3, 4):
 #        print("i[" + str(i) + "]")
         for j in range(i+1, max_num):
         #for j in range(20, 21):
@@ -360,8 +382,10 @@ def sub_main():
 
     global MegaMillions_probabilities
     global MegaMillions_Mega_probabilities
+    global MegaMillions_position_probabilities
     global PowerBall_probabilities
     global PowerBall_Power_probabilities
+    global PowerBall_position_probabilities
 
     global MegaMillions_sums
     global MegaMillions_sums_with_spl
@@ -380,13 +404,23 @@ def sub_main():
 
     global min_MegaMillions_probability_interquartile
     global min_MegaMillions_spl_probability_interquartile
+    global min_MegaMillions_position_probability_interquartile
     global min_PowerBall_probability_interquartile
     global min_PowerBall_spl_probability_interquartile
+    global min_PowerBall_position_probability_interquartile
 
     global max_MegaMillions_probability_interquartile
     global max_MegaMillions_spl_probability_interquartile
+    global max_MegaMillions_position_probability_interquartile
     global max_PowerBall_probability_interquartile
     global max_PowerBall_spl_probability_interquartile
+    global max_PowerBall_position_probability_interquartile
+
+    min_MegaMillions_position_probability_interquartile = [ int(0) for i in range(5) ]
+    min_PowerBall_position_probability_interquartile = [ int(0) for i in range(5) ]
+    max_MegaMillions_position_probability_interquartile = [ int(0) for i in range(5) ]
+    max_PowerBall_position_probability_interquartile = [ int(0) for i in range(5) ]
+
 
     MegaMillions_past_winning_numbers = get_winning_numbers("MegaMillions")
     #print("Printing MegaMillions Winning Numbers==================================")
@@ -398,17 +432,21 @@ def sub_main():
     #for numbers in PowerBall_past_winning_numbers:
     #    print(numbers)
     
-    MegaMillions_probabilities,MegaMillions_Mega_probabilities = find_probabilities("MegaMillions",MegaMillions_past_winning_numbers)
+    MegaMillions_probabilities,MegaMillions_Mega_probabilities,MegaMillions_position_probabilities = find_probabilities("MegaMillions",MegaMillions_past_winning_numbers)
     #print("Printing MegaMillions Probabilities==================================")
     #print(MegaMillions_probabilities)
     #print("Printing MegaMillions Mega Probabilities==================================")
     #print(MegaMillions_Mega_probabilities)
+    #print("Printing MegaMillions Mega Position Probabilities==================================")
+    #print(MegaMillions_position_probabilities)
     
-    PowerBall_probabilities,PowerBall_Power_probabilities = find_probabilities("PowerBall",PowerBall_past_winning_numbers)
+    PowerBall_probabilities,PowerBall_Power_probabilities,PowerBall_position_probabilities = find_probabilities("PowerBall",PowerBall_past_winning_numbers)
     #print("Printing PowerBall Probabilities==================================")
     #print(PowerBall_probabilities)
     #print("Printing PowerBall Power Probabilities==================================")
     #print(PowerBall_Power_probabilities)
+    #print("Printing PowerBall position Probabilities==================================")
+    #print(PowerBall_position_probabilities)
     
     MegaMillions_sums,MegaMillions_sums_with_spl = find_sums("MegaMillions", MegaMillions_past_winning_numbers)
     PowerBall_sums,PowerBall_sums_with_spl = find_sums("PowerBall", PowerBall_past_winning_numbers)
@@ -433,9 +471,31 @@ def sub_main():
     min_PowerBall_sums_interquartile,max_PowerBall_sums_interquartile=get_interquartile_range(PowerBall_sums)
     min_PowerBall_sums_with_spl_interquartile,max_PowerBall_sums_with_spl_interquartile=get_interquartile_range(PowerBall_sums_with_spl)
     #print(min_MegaMillions_sums_interquartile,max_MegaMillions_sums_interquartile,min_MegaMillions_sums_with_spl_interquartile,max_MegaMillions_sums_with_spl_interquartile,min_PowerBall_sums_interquartile,max_PowerBall_sums_interquartile,min_PowerBall_sums_with_spl_interquartile,max_PowerBall_sums_with_spl_interquartile)
-    
-    #generate_winning_numbers("MegaMillions")
-    generate_winning_numbers("PowerBall")
+
+    for i in range(5):
+        #print("Printing MegaMillions position probability ",MegaMillions_position_probabilities[i])
+        min_MegaMillions_position_probability_interquartile[i],max_MegaMillions_position_probability_interquartile[i]=get_interquartile_range(MegaMillions_position_probabilities[i])
+        #print("Printing MegaMillions position probability ",MegaMillions_position_probabilities[i])
+        #print("Printing min MegaMillions position probability interquartile ",min_MegaMillions_position_probability_interquartile[i])
+        #print("Printing max MegaMillions position probability interquartile ",max_MegaMillions_position_probability_interquartile[i])
+        #print("Printing min PowerBall position probability ",MegaMillions_position_probabilities[i])
+        min_PowerBall_position_probability_interquartile[i],max_PowerBall_position_probability_interquartile[i]=get_interquartile_range(PowerBall_position_probabilities[i])
+
+    #print("Printing min MegaMillions Position Probability")
+    #print(min_MegaMillions_position_probability_interquartile)
+    #print("Printing min PowerBall Position Probability")
+    #print(min_PowerBall_position_probability_interquartile)
+    #print("Printing max MegaMillions Position Probability")
+    #print(max_MegaMillions_position_probability_interquartile)
+    #print("Printing max PowerBall Position Probability")
+    #print(max_PowerBall_position_probability_interquartile)
+    #print("Printing MegaMillions Mega Position Probabilities==================================")
+    #print(MegaMillions_position_probabilities)
+    #print("Printing PowerBall position Probabilities==================================")
+    #print(PowerBall_position_probabilities)
+
+    generate_winning_numbers("MegaMillions")
+    #generate_winning_numbers("PowerBall")
 
 def main(argv):
     global testpercent
